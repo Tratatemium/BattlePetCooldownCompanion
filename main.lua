@@ -33,7 +33,7 @@ SlashCmdList["BPCC"] = function(msg)
     end
 end
 
-enemyActivePetCooldownsFrame.ability_1 = CreateFrame("Frame", "ability_1", enemyActivePetCooldownsFrame)
+enemyActivePetCooldownsFrame.ability_1 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_1", enemyActivePetCooldownsFrame)
 enemyActivePetCooldownsFrame.ability_1:SetSize(80, 80)
 enemyActivePetCooldownsFrame.ability_1:SetPoint("CENTER", "enemyActivePetCooldownsFrame", "CENTER", -50, 0)
 enemyActivePetCooldownsFrame.ability_1.border = enemyActivePetCooldownsFrame.ability_1:CreateTexture(nil, "OVERLAY")
@@ -41,25 +41,25 @@ enemyActivePetCooldownsFrame.ability_1.border:SetTexture("Interface\\Buttons\\UI
 enemyActivePetCooldownsFrame.ability_1.border:SetAllPoints(enemyActivePetCooldownsFrame.ability_1)
 enemyActivePetCooldownsFrame.ability_1.iconTexture = enemyActivePetCooldownsFrame.ability_1:CreateTexture(nil, "ARTWORK")
 enemyActivePetCooldownsFrame.ability_1.iconTexture:SetSize(50, 50)  -- Icon size
-enemyActivePetCooldownsFrame.ability_1.iconTexture:SetPoint("CENTER", enemyActivePetCooldownsFrame.ability_1, "CENTER")
 local tooltip = FloatingPetBattleAbilityTooltip
 enemyActivePetCooldownsFrame.ability_1:SetScript("OnEnter", function(self)
     FloatingPetBattleAbility_Show(616,2000,250,313)
+    tooltip:SetPoint("BOTTOM", "enemyActivePetCooldownsFrame.ability_1", "TOP", 0, 0)
 end)
 
 enemyActivePetCooldownsFrame.ability_1:SetScript("OnLeave", function(self)
-    
+    tooltip:Hide()
 end)
 
 
-enemyActivePetCooldownsFrame.ability_2 = CreateFrame("Frame", "ability_2", enemyActivePetCooldownsFrame)
+enemyActivePetCooldownsFrame.ability_2 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_2", enemyActivePetCooldownsFrame)
 enemyActivePetCooldownsFrame.ability_2:SetSize(80, 80)
 enemyActivePetCooldownsFrame.ability_2:SetPoint("CENTER", "enemyActivePetCooldownsFrame", "CENTER", 0, 0)
 enemyActivePetCooldownsFrame.ability_2.border = enemyActivePetCooldownsFrame.ability_2:CreateTexture(nil, "OVERLAY")
 enemyActivePetCooldownsFrame.ability_2.border:SetTexture("Interface\\Buttons\\UI-Quickslot2") -- Button border texture
 enemyActivePetCooldownsFrame.ability_2.border:SetAllPoints(enemyActivePetCooldownsFrame.ability_2)
 
-enemyActivePetCooldownsFrame.ability_3 = CreateFrame("Frame", "ability_3", enemyActivePetCooldownsFrame)
+enemyActivePetCooldownsFrame.ability_3 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_3", enemyActivePetCooldownsFrame)
 enemyActivePetCooldownsFrame.ability_3:SetSize(80, 80)
 enemyActivePetCooldownsFrame.ability_3:SetPoint("CENTER", "enemyActivePetCooldownsFrame", "CENTER", 50, 0)
 enemyActivePetCooldownsFrame.ability_3.border = enemyActivePetCooldownsFrame.ability_3:CreateTexture(nil, "OVERLAY")
@@ -96,14 +96,6 @@ local function eventHandler(self, event, ...)
         if icon then
             enemyActivePetCooldownsFrame.ability_1.iconTexture:SetTexture(icon)
         end
-
---[[         if id then
-            
-        end ]]
-
-        enemyActivePetCooldownsFrame.ability_1:SetScript("OnLeave", function(self)
-            GameTooltip:Hide()        
-        end)
 
 
     end

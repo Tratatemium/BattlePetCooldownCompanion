@@ -2,7 +2,7 @@
 ## Title: BattlePetCooldownCompanion
 ## Notes: Addon that tracks ability cooldowns and effects on inactive battle pets.
 ## Author: Tratatemium
-## Version: 0.0.1
+## Version: 0.0.2
 ## RequiredDeps:
 ## X-Curse-Project-ID: 999999
 ## SavedVariables:
