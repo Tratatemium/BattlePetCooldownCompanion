@@ -1,6 +1,8 @@
 -- This addon that tracks ability cooldowns and effects on inactive battle pets.
 -- It is a remake of Derangement\’s Pet Battle Cooldowns
 
+BPCC = BPCC or {}
+
 --[[ 
     **************************************************
     * SECTION: functions
@@ -33,23 +35,38 @@ SlashCmdList["BPCC"] = function(msg)
     end
 end
 
+
 enemyActivePetCooldownsFrame.ability_1 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_1", enemyActivePetCooldownsFrame)
-enemyActivePetCooldownsFrame.ability_1:SetSize(80, 80)
+enemyActivePetCooldownsFrame.ability_1:SetSize(50, 50)
 enemyActivePetCooldownsFrame.ability_1:SetPoint("CENTER", "enemyActivePetCooldownsFrame", "CENTER", -50, 0)
+
 enemyActivePetCooldownsFrame.ability_1.border = enemyActivePetCooldownsFrame.ability_1:CreateTexture(nil, "OVERLAY")
 enemyActivePetCooldownsFrame.ability_1.border:SetTexture("Interface\\Buttons\\UI-Quickslot2") -- Button border texture
-enemyActivePetCooldownsFrame.ability_1.border:SetAllPoints(enemyActivePetCooldownsFrame.ability_1)
+enemyActivePetCooldownsFrame.ability_1.border:SetSize(80, 80)
+enemyActivePetCooldownsFrame.ability_1.border:SetPoint("CENTER", "enemyActivePetCooldownsFrame.ability_1", "CENTER", 0, 0)
+
 enemyActivePetCooldownsFrame.ability_1.iconTexture = enemyActivePetCooldownsFrame.ability_1:CreateTexture(nil, "ARTWORK")
 enemyActivePetCooldownsFrame.ability_1.iconTexture:SetSize(50, 50)  -- Icon size
-local tooltip = FloatingPetBattleAbilityTooltip
+enemyActivePetCooldownsFrame.ability_1.iconTexture:SetPoint("CENTER", "enemyActivePetCooldownsFrame.ability_1", "CENTER", 0, 0)
+
+
+
+--[[ local tooltip = FloatingPetBattleAbilityTooltip
+
 enemyActivePetCooldownsFrame.ability_1:SetScript("OnEnter", function(self)
-    FloatingPetBattleAbility_Show(616,2000,250,313)
-    tooltip:SetPoint("BOTTOM", "enemyActivePetCooldownsFrame.ability_1", "TOP", 0, 0)
+    FloatingPetBattleAbility_Show(616,2000,250,313) 
+    tooltip:ClearAllPoints()
+    local x, y = self:GetCenter()
+    tooltip:SetPoint("BOTTOM", UIParent, "BOTTOMLEFT", x, y + 30)
+    tooltip.CloseButton:Hide()
 end)
 
 enemyActivePetCooldownsFrame.ability_1:SetScript("OnLeave", function(self)
     tooltip:Hide()
-end)
+end) ]]
+
+
+
 
 
 enemyActivePetCooldownsFrame.ability_2 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_2", enemyActivePetCooldownsFrame)
@@ -58,6 +75,7 @@ enemyActivePetCooldownsFrame.ability_2:SetPoint("CENTER", "enemyActivePetCooldow
 enemyActivePetCooldownsFrame.ability_2.border = enemyActivePetCooldownsFrame.ability_2:CreateTexture(nil, "OVERLAY")
 enemyActivePetCooldownsFrame.ability_2.border:SetTexture("Interface\\Buttons\\UI-Quickslot2") -- Button border texture
 enemyActivePetCooldownsFrame.ability_2.border:SetAllPoints(enemyActivePetCooldownsFrame.ability_2)
+
 
 enemyActivePetCooldownsFrame.ability_3 = CreateFrame("Frame", "enemyActivePetCooldownsFrame.ability_3", enemyActivePetCooldownsFrame)
 enemyActivePetCooldownsFrame.ability_3:SetSize(80, 80)
@@ -88,7 +106,7 @@ local function eventHandler(self, event, ...)
     end
 
     if event == "PET_BATTLE_OPENING_START" then
-        print("PET_BATTLE_OPENING_START")
+
         enemyActivePetCooldownsFrame:Show()
 
         local activeEnemyPetIndex = C_PetBattles.GetActivePet(2)
@@ -96,12 +114,33 @@ local function eventHandler(self, event, ...)
         if icon then
             enemyActivePetCooldownsFrame.ability_1.iconTexture:SetTexture(icon)
         end
+        C_Timer.After(0, function()
+            BPCC.createTooltip(enemyActivePetCooldownsFrame.ability_1, "UP", id, "ENEMY", activeEnemyPetIndex)
+        end)
+
+
+    end
+    if event == "PET_BATTLE_PET_ROUND_RESULTS" then
+
+        print("PET_BATTLE_PET_ROUND_RESULTS")
+
+        enemyActivePetCooldownsFrame:Show()
+
+        local activeEnemyPetIndex = C_PetBattles.GetActivePet(2)
+        local id, name, icon, maxCooldown, unparsedDescription, numTurns, petType, noStrongWeakHints = C_PetBattles.GetAbilityInfo(2, activeEnemyPetIndex, 1)
+        print("activeEnemyPetIndex=" .. (activeEnemyPetIndex or "no index") .. "  id=" .. (id or "no id"))
+        if icon then
+            enemyActivePetCooldownsFrame.ability_1.iconTexture:SetTexture(icon)
+        end
+        C_Timer.After(0, function()
+            BPCC.createTooltip(enemyActivePetCooldownsFrame.ability_1, "UP", id, "ENEMY", activeEnemyPetIndex)
+        end)
 
 
     end
 
+
     if event == "PET_BATTLE_CLOSE" then
-        print("PET_BATTLE_CLOSE")
         enemyActivePetCooldownsFrame:Hide()
     end
 
@@ -115,7 +154,7 @@ eventListenerFrame:RegisterEvent("PET_BATTLE_OPENING_START")
 eventListenerFrame:RegisterEvent("PET_BATTLE_CLOSE")
 
 
-eventListenerFrame:RegisterEvent("BANKFRAME_OPENED")
+eventListenerFrame:RegisterEvent("PET_BATTLE_PET_ROUND_RESULTS")
 eventListenerFrame:RegisterEvent("BANKFRAME_CLOSED")
 eventListenerFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 eventListenerFrame:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
