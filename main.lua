@@ -33,6 +33,25 @@ function BPCC.createAbilityIcon(abilityIcon, abilityIconName, parent, xOffset)
     abilityIcon.modifierTexture:SetSize(20, 20)  -- Icon size
     abilityIcon.modifierTexture:SetPoint("CENTER", abilityIconName, "CENTER", 15, -15)
     abilityIcon.modifierTexture:SetDrawLayer("OVERLAY", 1)
+
+    abilityIcon.cooldownShadow = abilityIcon:CreateTexture(nil, "BORDER")
+    abilityIcon.cooldownShadow:SetTexture(603587)
+    abilityIcon.cooldownShadow:SetSize(50, 50)  -- Icon size
+    abilityIcon.cooldownShadow:SetTexCoord(0.716796875, 0.7685546875, 0.853515625, 0.955078125)
+    abilityIcon.cooldownShadow:SetPoint("CENTER", abilityIconName, "CENTER", 0, 0)
+    abilityIcon.cooldownShadow:SetDrawLayer("OVERLAY", 1)
+
+    abilityIcon.cooldownText = abilityIcon:CreateFontString(nil, "OVERLAY")
+    abilityIcon.cooldownText:SetDrawLayer("OVERLAY", 1)
+    abilityIcon.cooldownText:SetFont("fonts/frizqt__.ttf", 31)
+    abilityIcon.cooldownText:SetTextColor(1, 0.8196, 0, 1)
+    abilityIcon.cooldownText:SetPoint("CENTER", abilityIconName, "CENTER", 0, 0)
+
+    abilityIcon.iconTexture:SetDesaturated(false)
+    abilityIcon.iconTexture:SetVertexColor(1, 1, 1, 1)
+    abilityIcon.cooldownShadow:Hide()
+    abilityIcon.cooldownText:SetText("")
+
 end
 
 
@@ -55,10 +74,28 @@ function BPCC.updateAbilityIcon(abilityIcon, i)
     local playerActivePetType = C_PetBattles.GetPetType(1, C_PetBattles.GetActivePet(1))    
     local _, _, abilityType = C_PetJournal.GetPetAbilityInfo(id)
     local modifier = C_PetBattles.GetAttackModifier(abilityType, playerActivePetType)
-    if modifier > 1 then
+    if modifier == 1  or noStrongWeakHints then
+        abilityIcon.modifierTexture:SetTexture(nil)
+    elseif modifier > 1 then
         abilityIcon.modifierTexture:SetTexture(608706)
-    elseif modifier < 1 then
+    else
         abilityIcon.modifierTexture:SetTexture(608707)
+    end
+
+    -- Cooldown
+    local isUsable, currentCooldown, currentLockdown = C_PetBattles.GetAbilityState(2, activeEnemyPetIndex, i)
+    print(isUsable)
+    if isUsable then
+        abilityIcon.iconTexture:SetDesaturated(false)
+        abilityIcon.iconTexture:SetVertexColor(1, 1, 1, 1)
+        abilityIcon.cooldownShadow:Hide()
+        abilityIcon.cooldownText:SetText("")
+    else
+        abilityIcon.iconTexture:SetDesaturated(true)
+        abilityIcon.iconTexture:SetVertexColor(0.502, 0.502, 0.502, 1)
+        abilityIcon.cooldownShadow:Show()
+        print(currentCooldown, currentLockdown)
+        abilityIcon.cooldownText:SetText(currentCooldown)
     end
 
     --Create tooltip
@@ -149,7 +186,7 @@ local function eventHandler(self, event, ...)
 
     end
 
-    if event == "PET_BATTLE_PET_ROUND_RESULTS" then
+    if event == "PET_BATTLE_PET_ROUND_PLAYBACK_COMPLETE" then
 
         BPCC.UpdateIcons(enemyActivePetCooldownsFrame)
 
@@ -178,5 +215,5 @@ eventListenerFrame:RegisterEvent("PET_BATTLE_CLOSE")
 
 eventListenerFrame:RegisterEvent("PET_BATTLE_PET_ROUND_RESULTS")
 eventListenerFrame:RegisterEvent("PET_BATTLE_PET_CHANGED")
-eventListenerFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+eventListenerFrame:RegisterEvent("PET_BATTLE_PET_ROUND_PLAYBACK_COMPLETE")
 eventListenerFrame:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
