@@ -37,6 +37,8 @@ end
 ---@param xOffset number
 ---@param iconSize integer
 function BPCC.createAbilityIcon(abilityIcon, abilityIconName, parent, xOffset, iconSize)
+    iconSize = iconSize - 1
+
     abilityIcon = CreateFrame("Frame", abilityIconName, parent)
     abilityIcon:SetSize(iconSize, iconSize)
     abilityIcon:SetPoint("CENTER", parent:GetName(), "CENTER", xOffset, 0)
@@ -94,7 +96,7 @@ function BPCC.clearIcons(parentFrame)
 end
 
 
---- *** Update Icons ***
+--- *** Update Ability Icons ***
 
 ---Function that updates ability icons on selected frame
 ---@param parentFrame table
@@ -105,11 +107,16 @@ function BPCC.updateIcons(parentFrame)
 end
 
 
+--- *** Update Ability Icon ***
 
 ---Function that assigns correct textures to pet ability icons and creates tooltips
 ---@param abilityIcon table|Frame
 ---@param i number
 function BPCC.updateAbilityIcon(abilityIcon, i)
+
+    if not abilityIcon:IsShown() then
+        abilityIcon:Show()
+    end
 
     abilityIcon.border:Show()
 
